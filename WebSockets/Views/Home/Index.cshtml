@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <input type="button" id="connect-button" value="connect socket"/>
+</div>
+
+<script type="text/javascript">
+//$("#connect-button").on("click",()=>{
+//    console.log("testing button...");
+//})
+
+const connectButton = document.getElementById("connect-button")
+connectButton.onclick = ()=>{
+    console.log("testing button...");
+    openWebSocketConnection();
+}
+
+const openWebSocketConnection = ()=>{
+            socket = new WebSocket('ws://localhost:5252/ws');
+            socket.onopen = function (event) {
+                    console.log('socket opened..');
+            };
+
+            socket.onmessage = function (event) {
+                console.log('data recieved from socket: ' + event.data);
+            };
+}       
+</script>
