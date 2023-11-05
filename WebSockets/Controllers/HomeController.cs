@@ -66,8 +66,27 @@ namespace WebSockets.Controllers
                 socket = webSocket;
                 //await sendMessage_old("a7aaaaaaaaaa");
 
-                //_socketPool.AddSocket(key, webSocket);
-                connectionPoolTest.TryAdd(key, webSocket);
+                _socketPool.AddSocket(key, webSocket);
+                //connectionPoolTest.TryAdd(key, webSocket);
+
+                var buffer = new byte[1024 * 4];
+                try
+                {
+                    var receiveResult = await webSocket.ReceiveAsync(
+                    new ArraySegment<byte>(buffer), CancellationToken.None);
+
+                    while (!receiveResult.CloseStatus.HasValue)
+                    {
+                        receiveResult = await webSocket.ReceiveAsync(
+                            new ArraySegment<byte>(buffer), CancellationToken.None);
+                    }
+                }
+
+                catch (Exception ex)
+                {
+
+                }
+
                 //await UpdateStatus(key);
 
                 //await UpdateStatus();
