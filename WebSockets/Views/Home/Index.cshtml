@@ -3,10 +3,10 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome to Chat with Web Scokets</h1>
     <input type="button" id="connect-button" value="send over socket"/>
-    <div style="min-height: 100px; border: 1px ridge">
+    <input type="text" id="message-box"/>
+    <div style="min-height: 100px; border: 1px ridge" id="chat-box">
 
     </div>
 </div>
@@ -15,35 +15,42 @@
     var id = null;
     var socket = null;
 
+    const sendOverSocketButton = document.getElementById("connect-button")
+    const messageBox = document.getElementById("message-box");
+    const chatBox = document.getElementById("chat-box");
+
     const openWebSocketConnection = ()=>{
-            id = crypto.randomUUID();
+        id = crypto.randomUUID();
 
-            socket = new WebSocket(`ws://localhost:5252/ws2?socketId=${id}`);
-            socket.onopen = function (event) {
-                    console.log('socket opened..');
-            };
+        socket = new WebSocket(`ws://localhost:5252/ws2?socketId=${id}`);
+        socket.onopen = function (event) {
+                console.log('socket opened..');
+        };
             
-            socket.addEventListener("close", (event) => {
-                console.log("The connection has been closed successfully.");
-            });
+        socket.addEventListener("close", (event) => {
+            console.log("The connection has been closed successfully.");
+        });
 
-            socket.onmessage = function (event) {
-                console.log('message recieved from socket: ' + event.data);
-            };
+        socket.onmessage = function (event) {
+            appendMessage(event.data);
+        };
     }       
+
+    const appendMessage = (message)=>{
+        let messageDiv = document.createElement("div");
+        messageDiv.innerHTML = message;
+
+        chatBox.appendChild(messageDiv)
+    }
 
     addEventListener("DOMContentLoaded", (event) => {
         openWebSocketConnection();
     });
 
-const sendOverSocket = document.getElementById("connect-button")
-    
-sendOverSocket.onclick = ()=>{
-    //const xhr = new XMLHttpRequest();
-    //xhr.open("GET", `Home/UpdateStatus?socketId=${id}`);
-    //xhr.send();
-    socket.send("dataaaaaaaaaaa")
-}
-
-   
+    sendOverSocketButton.onclick = ()=>{
+        if(messageBox.value){
+            socket.send(messageBox.value);
+            messageBox.value = "";
+        }
+    }
 </script>
